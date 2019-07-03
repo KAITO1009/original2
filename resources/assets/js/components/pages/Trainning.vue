@@ -1,6 +1,7 @@
 <template>
     <div>
         <h1>Attention Trainning</h1>
+        <div id="timer">残り<span id="count"></span>分</div>
         <div class="load-imgs">
         <a
             v-for="photo in photos"
@@ -13,8 +14,8 @@
             <img
               v-bind:src="photo.imageURL"
               v-bind:alt="photo.text"
-              width="150"
-              height="150"
+              width="250"
+              height="250"
             />
           </a>
     </div>
@@ -30,13 +31,36 @@
         data(){
             return {
                 photos:[],
-                prevSearchText: ""
+                searchText: "",
+                setTime:1,
             }
         },
-        created() {
+        mounted() {
             this.fetchImagesFromFlickr();
+            
+            $("#count").text(this.setTime);
+            
+            this.startTimer();
+        },
+        watch:{
+          setTime:function(){
+              if(this.setTime == 0){
+                  router.push("/trainning/2");
+              }
+          }
         },
         methods: {
+            startTimer(){
+                var t = setInterval(function(){
+                this.setTime ++;
+                $("#count").text(this.setTime);
+                
+                if(this.setTime == 0){
+                    console.log("timeout")
+                    clearTimeout(t);
+                }
+            },60000)
+            },
             // photoオブジェクトから画像のURLを作成して返す
             getFlickrImageURL(photo, size) {
               var url =
@@ -77,29 +101,31 @@
                 api_key: API_KEY,
                 text: searchText, // 検索テキスト
                 sort: "interestingness-desc", // 興味深さ順
-                per_page: 6, // 取得件数
+                per_page: 8, // 取得件数
                 license: "4", // Creative Commons Attributionのみ
                 extras: "owner_name,license", // 追加で取得する情報
                 format: "json", // レスポンスをJSON形式に
                 nojsoncallback: 1 // レスポンスの先頭に関数呼び出しを含めない
               });
+              
               var flickr_url = "https://api.flickr.com/services/rest/?" + parameters;
               console.log(flickr_url);
         
         
               // Vueインスタンスのデータとして、検索テキストを保持しておく
-              vm.prevSearchText = searchText;
+              vm.searchText = searchText;
         
               $.getJSON(flickr_url, function(data) {
                 if (data.stat !== "ok") {
-                  
-                  return;
+                    console.log('data.stat error')
+                    return;
                 }
         
                 var _photos = data.photos.photo;
         
                 // 検索テキストに該当する写真データがない場合
                 if (_photos.length === 0) {
+                    console.log('no image')
                   return;
                 }
         
@@ -113,11 +139,12 @@
                 });
                 
               }).fail(function() {
-               
+                    console.log('json取得失敗')
               });
             }
         }
     }
+
 </script>
 
 <stayle scoped>
