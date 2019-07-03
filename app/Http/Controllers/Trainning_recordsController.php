@@ -10,7 +10,7 @@ class Trainning_recordsController extends Controller
 {
     public function index()
     {
-        return view('trainning');
+        return view('app');
     }
     
     public function store(Request $request, $id)
