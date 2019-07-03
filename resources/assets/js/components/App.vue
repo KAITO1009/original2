@@ -8,6 +8,9 @@
                     <div class="panel-body">
                         I'm an example component!
                     </div>
+                    <div class="app-contents">
+                        <RouterView />
+                    </div>
                 </div>
             </div>
         </div>
