@@ -26,11 +26,11 @@ Route::post('login', 'Auth\LoginController@login')->name('login.post');
 Route::get('logout', 'Auth\LoginController@logout')->name('logout.get');
 
 
-Route::get('meditation', 'Meditation_recordsController@index')->name("meditation");
+Route::get('meditation/{any?}', 'Meditation_recordsController@index')->name("meditation")->where('any', ".+");
 
-Route::get('trainning', 'Trainning_recordsController@index')->name("trainning");
+Route::get('trainning/{any?}', 'Trainning_recordsController@index')->name("trainning")->where('any', '.+');
 
-Route::get('exw', 'Exw_recordsController@index')->name("exw");
+Route::get('exw/{any?}', 'Exw_recordsController@index')->name("exw")->where('any', '.+');
 
 Route::group(['middleware' => 'auth'], function(){
     Route::resource('users', 'UsersController', ['only' => 'show']);
