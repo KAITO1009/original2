@@ -1,17 +1,11 @@
 <template>
     <div class="container">
         <div class="row">
-            <div class="col-md-8 col-md-offset-2">
-                <div class="panel panel-default">
-                    <div class="panel-heading">Example Component</div>
-
-                    <div class="panel-body">
-                        I'm an example component!
-                    </div>
-                    <div class="app-contents">
-                        <RouterView />
-                    </div>
-                </div>
+            <div class="app-contents">
+                <h1>test</h1>
+                <transition appear mode="out-in">
+                     <router-view />
+                </transition>
             </div>
         </div>
     </div>
@@ -20,7 +14,17 @@
 <script>
     export default {
         mounted() {
-            console.log('Component mounted.')
+            console.log('App-Component mounted.')
         }
     }
 </script>
+
+<style scoped>
+    .v-enter-active, .v-leave-active{
+        transition:opacity 1s;
+    }
+    .v-enter, .v-leave-to {
+        opacity: 0;
+    }
+    
+</style>
