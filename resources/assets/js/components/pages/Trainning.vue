@@ -22,15 +22,15 @@
 </template>
 
 <script>
+    // Flickr API key
+    var API_KEY = "855f42e9292ee097a8f0f217d7b3ce78";
+
+
     export default {
         data(){
             return {
                 photos:[],
-                prevSearchText: "",
-                headers: {
-                            'Content-Type': 'application/json;charset=UTF-8',
-                            'Access-Control-Allow-Origin': '*',
-                          }
+                prevSearchText: ""
             }
         },
         created() {
@@ -70,8 +70,6 @@
               return text;
             },
             fetchImagesFromFlickr(event) {
-              // Flickr API key
-              var API_KEY = "855f42e9292ee097a8f0f217d7b3ce78";
               var vm = this;
               var searchText = 'smile';
               var parameters = $.param({
@@ -91,14 +89,14 @@
         
               // Vueインスタンスのデータとして、検索テキストを保持しておく
               vm.prevSearchText = searchText;
-             
-              axios({method: "GET", url:flickr_url,headers: vm.headers}).then(response => {vm.data = response})
-                if (vm.data.stat !== "ok") {
+        
+              $.getJSON(flickr_url, function(data) {
+                if (data.stat !== "ok") {
                   
                   return;
                 }
         
-                var _photos = this.data.photos.photo;
+                var _photos = data.photos.photo;
         
                 // 検索テキストに該当する写真データがない場合
                 if (_photos.length === 0) {
@@ -113,6 +111,10 @@
                     text: vm.getFlickrText(photo)
                   };
                 });
+                
+              }).fail(function() {
+               
+              });
             }
         }
     }

@@ -15,6 +15,11 @@ window.Vue = require('vue');
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
+import jQuery from 'jquery'
+global.jquery = jQuery
+global.$ = jQuery
+window.$ = window.jQuery = require('jquery')
+
 import Vue from 'vue'
 // ルーティングの定義をインポートする
 import router from './router'
