@@ -10,7 +10,8 @@ class Exw_recordsController extends Controller
 {
     public function index()
     {
-        return view('app');
+        return view('app',[
+            "app" => "exw"]);
     }
     
     public function show($id)

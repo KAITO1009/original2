@@ -30,5 +30,18 @@ new Vue({
   el: '#app',
   router, // ルーティングの定義を読み込む
   components: { App }, // ルートコンポーネントの使用を宣言する
-  template: '<App />' // ルートコンポーネントを描画する
+  template: '<App v-bind:app="app" v-on:appEvent="storeEvent" />', // ルートコンポーネントを描画する
+  data:{app:app},
+  created:function(){
+      console.log("selected app:" + this.app);
+  },
+  methods:{
+      storeEvent:function(point){
+          console.log("app情報を取得：" + point);
+          document.getElementById("back").classList.remove('d-none');
+          document.getElementById("endBack").classList.remove('d-none');
+          document.getElementById("appInfo").value = point;
+          
+      }
+  }
 })

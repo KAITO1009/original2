@@ -10,7 +10,8 @@ class Meditation_recordsController extends Controller
 {
     public function index()
     {
-        return view('app');
+        return view('app',[
+            "app" => "meditation"]);
     }
     
     public function store(Request $request, $id)

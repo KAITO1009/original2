@@ -1,23 +1,19 @@
 <template>
     <div>
         <h1>Attention Trainning</h1>
-        <div id="timer">残り<span id="count"></span>分</div>
+        <div id="timer">残り{{ setTime }}分</div>
+        <p id="point">{{ point }}</p>
         <div class="load-imgs">
-        <a
-            v-for="photo in photos"
-            v-bind:key="photo.id"
-            v-bind:href="photo.pageURL"
-            v-tooltip="photo.text"
-            class="flickr-link"
-            target="_blank"
-          >
             <img
+              v-for="photo in photos"
+              v-bind:key="photo.id"
               v-bind:src="photo.imageURL"
               v-bind:alt="photo.text"
               width="250"
               height="250"
+              v-bind:class="photo.kind"
+              v-on:click="photos = [],pointup(photo.kind),fetchImagesFromFlickr('smile people',2),fetchImagesFromFlickr('sad people',6)"
             />
-          </a>
     </div>
     </div>
 </template>
@@ -25,41 +21,73 @@
 <script>
     // Flickr API key
     var API_KEY = "855f42e9292ee097a8f0f217d7b3ce78";
-
+    var setTime = 1;
 
     export default {
         data(){
             return {
                 photos:[],
                 searchText: "",
-                setTime:1,
+                setTime:setTime,
+                point:0
             }
         },
         mounted() {
-            this.fetchImagesFromFlickr();
+            //初期画像取得
+            this.fetchImagesFromFlickr("smile people",2);
+            this.fetchImagesFromFlickr("sad  people",6);
             
-            $("#count").text(this.setTime);
-            
-            this.startTimer();
-        },
-        watch:{
-          setTime:function(){
-              if(this.setTime == 0){
-                  router.push("/trainning/2");
-              }
-          }
-        },
-        methods: {
-            startTimer(){
-                var t = setInterval(function(){
-                this.setTime ++;
-                $("#count").text(this.setTime);
-                
-                if(this.setTime == 0){
-                    console.log("timeout")
+            //タイマー
+            var vm = this;
+            var t = setInterval(function(){
+                vm.countDown();
+                if(vm.setTime == 0){
+                    console.log(vm.setTime)
                     clearTimeout(t);
                 }
-            },60000)
+            },6000);
+            
+    
+        },
+        watch:{
+          setTime:function(n,o){
+              
+              if(n == 0){
+                  console.log("終了画面へ移動");
+                  this.$emit("childEvent", this.point);
+                  this.$router.push("/trainning/2");
+              }
+              
+          }
+          
+          
+        },
+        methods: {
+            countDown(){
+                
+                this.setTime --;
+                
+            },
+            photosSort(){
+                console.log("sort");
+                var list = this.photos;
+                for (var i = list.length - 1; i > 0; i--) {
+                		var j = Math.floor(Math.random() * (i + 1));
+                		if (i == j) continue;
+                		var k = list[i];
+                		list[i] = list[j];
+                		list[j] = k;
+                	}
+                this.photos = list;
+                console.log(list);
+
+            },
+            pointup(kind){
+                console.log(kind);
+                if(kind == "smile"){
+                    this.point += 10;
+                }
+                
             },
             // photoオブジェクトから画像のURLを作成して返す
             getFlickrImageURL(photo, size) {
@@ -93,15 +121,17 @@
               }
               return text;
             },
-            fetchImagesFromFlickr(event) {
+            fetchImagesFromFlickr(searchText,number) {
               var vm = this;
-              var searchText = 'smile';
+              
+              
+              
               var parameters = $.param({
                 method: "flickr.photos.search",
                 api_key: API_KEY,
                 text: searchText, // 検索テキスト
                 sort: "interestingness-desc", // 興味深さ順
-                per_page: 8, // 取得件数
+                per_page: 100, // 取得件数
                 license: "4", // Creative Commons Attributionのみ
                 extras: "owner_name,license", // 追加で取得する情報
                 format: "json", // レスポンスをJSON形式に
@@ -129,14 +159,36 @@
                   return;
                 }
         
-                vm.photos = _photos.map(function(photo) {
+                var kind;
+                if(number == 2){
+                    kind = "smile";
+                }else{
+                    kind = "angly";
+                }
+                
+        
+                _photos = _photos.map(function(photo) {
                   return {
                     id: photo.id,
                     imageURL: vm.getFlickrImageURL(photo, "q"),
                     pageURL: vm.getFlickrPageURL(photo),
-                    text: vm.getFlickrText(photo)
+                    text: vm.getFlickrText(photo),
+                    kind:kind
                   };
                 });
+                
+               
+                for(var i=1; i<=number; i++){
+                    console.log(_photos.length)
+                     var r = Math.floor(Math.random() * _photos.length); 
+                     console.log(r);
+                     vm.photos.push(_photos[r]);
+                     vm.photosSort();
+                }
+               
+                
+
+
                 
               }).fail(function() {
                     console.log('json取得失敗')
@@ -147,6 +199,6 @@
 
 </script>
 
-<stayle scoped>
+<stale scoped>
     
-</stayle>
+</style>

@@ -13,7 +13,7 @@
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->name("top");
 
 
 //登録
@@ -37,8 +37,8 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('exw/show/{id}', 'Exw_recordController@show')->name('exw.show');
     
     
-    Route::post('meditation', 'Meditation_recordsController@store')->name("meditation.post");
-    Route::post('trainning', 'Trainning_recordsController@store')->name("trainning.post");
-    Route::post('exw', 'Exw_recordsController@store')->name("exw.post"); 
+    Route::post('meditation', 'Meditation_recordsController@store')->name("meditation.store");
+    Route::post('trainning', 'Trainning_recordsController@store')->name("trainning.store");
+    Route::post('exw', 'Exw_recordsController@store')->name("exw.store"); 
     
 });

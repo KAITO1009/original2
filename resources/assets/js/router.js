@@ -17,7 +17,8 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/trainning',
-    component: Intro
+    component: Intro,
+    props: true
   },
   {
     path: '/trainning/1',
